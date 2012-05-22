@@ -37,10 +37,23 @@ class CreateCode:
         pass
 
     def CreateDealloc(self):
-        pass
+        codes = '- (void)dealloc\n{\n'
+        for oneProperty in self.propertys:
+            if oneProperty.isObject:
+                codes += '\t[%s release];\n' % (oneProperty.valType, oneProperty.name)
+
+        codes += '\t[super dealloc];\n}\n'
+        return codes
 
     def CreateInit(self):
-        pass
+        codes = '- (id)initWithDict:(NSDictionary *)dict\n{\n\tself = [super init];\n'
+        codes += '\tif (self) {\n'
+        for oneProperty in self.propertys:
+            if oneProperty.isObject:
+                codes += '\t\tself.%s = [dict objectForKey:%s];\n' % (oneProperty.name, oneProperty.jsonKey)
+            else:
+                codes += '@property (nonatomic, assign) %s %s\n' % (oneProperty.valType, oneProperty.name)
+        codes += '\t}\n\treturn self;\n}'
 
     def CreateEncode(self):
         pass
